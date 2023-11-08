@@ -4,6 +4,7 @@ const brewery_container = document.querySelector(".brewery_container");
 const brewery_search_loader = document.querySelector(".brewery_search_loader");
 const noBreweriesFound = document.querySelector(".no-breweries-found");
 const lonelyContainer = document.querySelector(".lonely-container")
+const searchFormSubmitBtn = document.querySelector(".searchFormSubmitBtn");
 
 function populate_brewery_card(info) {
     if (info["phone"] == null) info["phone"] = "Not Available";
@@ -52,6 +53,7 @@ const getBreweries = (by, value) => {
         redirect: 'follow'
     };
 
+    searchFormSubmitBtn.classList.add("disabled");
     lonelyContainer.classList.add("d-none")
     noBreweriesFound.classList.add("d-none");
     brewery_search_loader.classList.remove("d-none");
@@ -81,7 +83,8 @@ const getBreweries = (by, value) => {
                 brewery_container.appendChild(brewery_card);
             })
         })
-        .catch(error => console.log('error', error));
+        .catch(error => console.log('error', error))
+        .finally(() => searchFormSubmitBtn.classList.remove("disabled"))
 }
 
 function searchBreweries(event) {
