@@ -32,19 +32,27 @@
         Hello, <span class="username"></span>
     </h1>
 
-    <form class="input-group mb-3 container mt-5" onsubmit="searchBreweries(event)">
+    <form name="brewery_search_form" class="input-group mb-3 container mt-5" onsubmit="searchBreweries(event)">
         <div class="input-group-text p-0">
-            <select id="filter_by" class="form-select form-select shadow-none bg-light border-0">
+            <select name="filter_by" id="filter_by" class="form-select form-select shadow-none bg-light border-0">
                 <option value="city" selected>By City</option>
                 <option value="name">By Name</option>
                 <option value="type">By Type</option>
             </select>
         </div>
-        <input type="text" class="form-control" placeholder="Search Here" id="search_bar" autofocus required>
+        <input type="text" class="form-control" placeholder="Search Here" name="search_bar" id="search_bar" autofocus
+            required>
         <button class="input-group-text shadow-none px-4 btn btn-success">
             Search
         </button>
     </form>
+
+    <div class="mt-8 container lonely-container">
+        <p class="text-center text-555 fs-54">It's so lonely in here.</p>
+        <p class="text-center">Try searching for <span class="text-primary cursor-pointer"
+                onclick="populate_suggestion_in_form()">32 North Brewing Co</span>?
+        </p>
+    </div>
 
     <div class="brewery_search_loader d-none text-center my-5 d-flex align-items-center justify-content-center">
         <div class="spinner-border text-center me-2" role="status">

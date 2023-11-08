@@ -3,6 +3,7 @@ document.querySelector(".username").innerHTML = localStorage.getItem("username")
 const brewery_container = document.querySelector(".brewery_container");
 const brewery_search_loader = document.querySelector(".brewery_search_loader");
 const noBreweriesFound = document.querySelector(".no-breweries-found");
+const lonelyContainer = document.querySelector(".lonely-container")
 
 function populate_brewery_card(info) {
     if (info["phone"] == null) info["phone"] = "Not Available";
@@ -51,6 +52,7 @@ const getBreweries = (by, value) => {
         redirect: 'follow'
     };
 
+    lonelyContainer.classList.add("d-none")
     noBreweriesFound.classList.add("d-none");
     brewery_search_loader.classList.remove("d-none");
 
@@ -93,4 +95,11 @@ function searchBreweries(event) {
     const search_bar_value = search_bar.value;
 
     getBreweries(filter_value, search_bar_value);
+}
+
+const populate_suggestion_in_form = () => {
+    const brewery_search_form = document.forms.namedItem("brewery_search_form")
+
+    brewery_search_form.elements.namedItem("filter_by").value = "name";
+    brewery_search_form.elements.namedItem("search_bar").value = "32 North Brewing Co";
 }

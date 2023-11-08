@@ -10,3 +10,19 @@
 	/* font-family: "Inter", sans-serif; */
 	font-family: "Open Sans", sans-serif;
 }
+
+.fs-54 {
+	font-size: 54px;
+}
+
+.mt-8 {
+	margin-top: 4rem;
+}
+
+.text-555 {
+	color: #555;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
