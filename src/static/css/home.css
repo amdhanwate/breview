@@ -1,0 +1,12 @@
+.text-orange {
+	color: rgb(197, 89, 0);
+}
+
+.fw-semibold {
+	font-weight: 500 !important;
+}
+
+* {
+	/* font-family: "Inter", sans-serif; */
+	font-family: "Open Sans", sans-serif;
+}

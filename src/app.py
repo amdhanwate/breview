@@ -3,7 +3,7 @@ import psycopg2
 import bcrypt 
 from database import get_db_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, JWTManager, jwt_required
-
+from brewery import getBreweriesByCity
 
 app = Flask(__name__)
 
@@ -104,12 +104,43 @@ def login():
         curr.close()
         conn.close()
 
+@jwt_required()
+@app.get("/api/v1/breweries")
+def searchBreweriesBy():
+    params = request.args
 
+    by_type = params.get("by_type")
+    by_city = params.get("by_city")
+    by_name = params.get("by_name")
+    per_page = params.get("per_page") or 5
+
+    if by_type:
+        pass
+    elif by_city:
+        result = getBreweriesByCity(by_city, per_page)
+
+        if result is not None:
+            return jsonify({
+                "status": "ok",
+                "data": result
+            })
+        
+        else:
+            return jsonify({
+                "status": "error",
+                "error": "Could not fetch breweries"
+            }), 500
+    elif by_name:
+        pass
 
 # Views
 @app.get("/auth")
 def getAuthPageView():
     return render_template("auth.html")
+
+@app.get("/")
+def getHomePageView():
+    return render_template("home.html")
 
 if __name__ == '__main__':
     app.run(port=3838, debug=True)
