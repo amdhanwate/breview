@@ -15,8 +15,16 @@ def fetch_brewery_rating(id: str):
         return rating_data[0]
     return None
 
-def getBreweriesByCity(city, per_page=5): 
-    API = "https://api.openbrewerydb.org/v1/breweries?by_city={0}&per_page={1}".format(city, per_page)
+def getBreweriesBy(by, city, per_page=5):
+    arg1 = None
+    if by == "city":
+        arg1 = "by_city"
+    elif by == "type":
+        arg1 = "by_type"
+    else:
+        arg1 = "by_name"
+
+    API = "https://api.openbrewerydb.org/v1/breweries?{0}={1}&per_page={2}".format(arg1, city, per_page)
 
     try:
         response = requests.get(API)

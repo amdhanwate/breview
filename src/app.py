@@ -3,7 +3,7 @@ import psycopg2
 import bcrypt 
 from database import get_db_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, JWTManager, jwt_required
-from brewery import getBreweriesByCity
+from brewery import getBreweriesBy
 
 app = Flask(__name__)
 
@@ -114,24 +114,25 @@ def searchBreweriesBy():
     by_name = params.get("by_name")
     per_page = params.get("per_page") or 5
 
+    result = None
     if by_type:
-        pass
+        result = result = getBreweriesBy("type", by_type, per_page)
     elif by_city:
-        result = getBreweriesByCity(by_city, per_page)
-
-        if result is not None:
-            return jsonify({
-                "status": "ok",
-                "data": result
-            })
-        
-        else:
-            return jsonify({
-                "status": "error",
-                "error": "Could not fetch breweries"
-            }), 500
+        result = getBreweriesBy("city", by_city, per_page)
     elif by_name:
-        pass
+        result = getBreweriesBy("name", by_name, per_page)
+
+    if result is not None:
+        return jsonify({
+            "status": "ok",
+            "data": result
+        }), 200
+        
+    else:
+        return jsonify({
+            "status": "error",
+            "error": "Could not fetch breweries"
+        }), 500
 
 # Views
 @app.get("/auth")
