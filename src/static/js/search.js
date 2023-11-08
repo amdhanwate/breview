@@ -1,6 +1,8 @@
 document.querySelector(".username").innerHTML = localStorage.getItem("username");
 
 const brewery_container = document.querySelector(".brewery_container");
+const brewery_search_loader = document.querySelector(".brewery_search_loader");
+const noBreweriesFound = document.querySelector(".no-breweries-found");
 
 function populate_brewery_card(info) {
     if (info["phone"] == null) info["phone"] = "Not Available";
@@ -49,7 +51,8 @@ const getBreweries = (by, value) => {
         redirect: 'follow'
     };
 
-    console.log(by, value);
+    noBreweriesFound.classList.add("d-none");
+    brewery_search_loader.classList.remove("d-none");
 
     const date1 = new Date();
     const url = encodeURI(`/api/v1/breweries?by_${by}=${value}&per_page=5`);
@@ -58,6 +61,13 @@ const getBreweries = (by, value) => {
         .then(response => response.json())
         .then(result => {
             const date2 = new Date();
+            brewery_search_loader.classList.add("d-none");
+
+            if (Array.isArray(result.data) && result.data.length == 0) {
+                noBreweriesFound.classList.remove("d-none");
+                return;
+            }
+
             const duration = ((date2 - date1) / (60 * 60)).toFixed(2);
             brewery_container.innerHTML = '<p class="small text-black-50 mb-2 results-info"></p>';
             document.querySelector(".results-info").innerHTML = `fetched ${result.data.length} results in ${duration}s`

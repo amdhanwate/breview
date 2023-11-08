@@ -40,15 +40,23 @@
                 <option value="type">By Type</option>
             </select>
         </div>
-        <input type="text" class="form-control" placeholder="Search Here" id="search_bar" autofocus>
+        <input type="text" class="form-control" placeholder="Search Here" id="search_bar" autofocus required>
         <button class="input-group-text shadow-none px-4 btn btn-success">
             Search
         </button>
     </form>
 
+    <div class="brewery_search_loader d-none text-center my-5 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-center me-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="my-0">Getting those breweries for you..</p>
+    </div>
+
+    <div class="mx-auto text-center container mt-4 d-none no-breweries-found">Oops! No breweries found.</div>
+
     <div class="brewery_container container mt-4">
         <p class="small text-black-50 mb-2 results-info"></p>
-
     </div>
 
 
