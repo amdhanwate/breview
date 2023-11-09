@@ -3,7 +3,7 @@ import psycopg2
 import bcrypt 
 from database import get_db_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, JWTManager, jwt_required
-from brewery import getBreweriesBy
+from brewery import getBreweriesBy, getBreweryByID, addNewReview
 
 app = Flask(__name__)
 
@@ -134,6 +134,38 @@ def searchBreweriesBy():
             "error": "Could not fetch breweries"
         }), 500
 
+@jwt_required()
+@app.get("/api/v1/breweries/<id>")
+def searchBreweryById(id):
+    brewery = getBreweryByID(id)
+
+    if brewery is not None:
+        return jsonify({
+            "status": "ok",
+            "data": brewery
+        }), 200
+
+    return jsonify({
+        "status": "error",
+        "message": "Could not find brewery with given id"
+    })
+
+@jwt_required()
+@app.post("/api/v1/breweries/<id>/review")
+def addBreweryReview(id):
+    data = request.json
+    review_status = addNewReview(id, data["username"], data["review"], data["rating"])
+
+    if review_status is True:
+        return jsonify({
+            "status": "ok"
+        }), 200
+
+    return jsonify({
+        "status": "error",
+        "message": "Could not add review"
+    })
+
 # Views
 @app.get("/auth")
 def getAuthPageView():
@@ -142,6 +174,11 @@ def getAuthPageView():
 @app.get("/")
 def getHomePageView():
     return render_template("home.html")
+
+@app.get("/brewery/<id>")
+def getBreweryView(id):
+    brewery = getBreweryByID(id)
+    return render_template("brewery.html", brewery=brewery)
 
 if __name__ == '__main__':
     app.run(port=3838, debug=True)
