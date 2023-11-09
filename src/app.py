@@ -4,11 +4,17 @@ import bcrypt
 from database import get_db_connection
 from flask_jwt_extended import create_access_token, create_refresh_token, JWTManager, jwt_required
 from brewery import getBreweriesBy, getBreweryByID, addNewReview
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 app.config['JWT_SECRET_KEY'] = 'your_secret_key'  # Change this to a strong, secret key
+app.config["JWT_COOKIE_SECURE"] = False
+# app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this in your code!
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
+
 
 # User registration route
 @app.route('/api/v1/signup', methods=['POST'])

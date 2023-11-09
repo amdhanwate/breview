@@ -13,14 +13,17 @@ function populate_brewery_card(info) {
         <div class="d-flex justify-content-center">
             <div class="" style="min-width: 400px;">
                 <p class="card-title h5 mb-1 fw-semibold">${info["name"]}</p>
-                <p class="mb-0 d-flex align-items-center">
-                    <span class="fw-bold me-2">4.3</span>
+                <p class="mb-0 d-flex align-items-center ${info["rating"] == null ? 'd-none' : ''}">
+                    <span class="fw-bold me-2">${info["rating"]}</span>
                     <i class="bg-dange me-0 p-1 rounded text-warning bx bxs-star"></i>
                     <i class="bg-dange me-0 p-1 rounded text-warning bx bxs-star"></i>
                     <i class="bg-dange me-0 p-1 rounded text-warning bx bxs-star"></i>
                     <i class="bg-dange me-0 p-1 rounded text-warning bx bxs-star"></i>
                     <i class="bg-dange me-0 p-1 rounded text-warning bx bxs-star-half"></i>
-                    <span class="ms-2 text-muted">(171 reviews)</span>
+                    <span class="ms-2 text-muted">(${info["review_count"]} reviews)</span>
+                </p>
+                <p class="mb-0 d-flex align-items-center ${info["rating"] == null ? '' : 'd-none'}">
+                    Not rated yet
                 </p>
             </div>
             <div>

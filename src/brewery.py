@@ -4,6 +4,17 @@ from database import get_db_connection
 # Replace this with the URL of the 3rd party API you want to access
 api_url = "https://example.com/api/data"
 
+def fetch_rating_data(brewery_id):
+    conn = get_db_connection()
+    curr = conn.cursor()
+
+    curr.execute("SELECT avg_rating, review_count FROM rating WHERE brewery_id = %s", (brewery_id,))
+    rating_data = curr.fetchone()
+
+    if rating_data:
+        return rating_data[0], rating_data[1]
+    return None
+
 def fetch_brewery_rating(id: str):
     conn = get_db_connection()
     curr = conn.cursor()
@@ -27,7 +38,7 @@ def fetch_brewery_reviews(id: str):
         for review in reviews_data:
             sum += int(review[4])
 
-        return (reviews_data, round(sum/len(reviews_data), 1))
+        return reviews_data
     return None
 
 def getBreweriesBy(by, city, per_page=5):
@@ -48,8 +59,8 @@ def getBreweriesBy(by, city, per_page=5):
 
         if response.status_code == 200:
             data = response.json()
-
             for brewery in data:
+                fetch_rating_response = fetch_rating_data(brewery["id"])
                 result.append({
                     "id": brewery["id"],
                     "name": brewery["name"],
@@ -58,7 +69,8 @@ def getBreweriesBy(by, city, per_page=5):
                     "website": brewery["website_url"] or "Not Available",
                     "city": brewery["city"],
                     "state": brewery["state"],
-                    "rating": fetch_brewery_rating(brewery["id"]),
+                    "rating": fetch_rating_response[0] if fetch_rating_response else None,
+                    "review_count": fetch_rating_response[1] if fetch_rating_response else 0
                 })
 
             return result
@@ -78,6 +90,7 @@ def getBreweryByID(id):
     if response.status_code == 200:
         data = response.json()
         fetch_review_response = fetch_brewery_reviews(data["id"])
+        fetch_rating_response = fetch_rating_data(data["id"])
         result = {
             "id": data["id"],
             "name": data["name"],
@@ -92,8 +105,9 @@ def getBreweryByID(id):
             "country": data["country"],
             "longitude": data["longitude"],
             "latitude": data["latitude"],
-            "reviews": fetch_review_response[0] if fetch_review_response else [],
-            "avg_rating": fetch_review_response[1] if fetch_review_response else 0
+            "reviews": fetch_review_response if fetch_review_response else [],
+            "avg_rating": fetch_rating_response[0] if fetch_rating_response else 0,
+            "review_count": fetch_rating_response[1] if fetch_rating_response else 0,
         }
 
         return result
@@ -104,7 +118,29 @@ def addNewReview(brewery_id, username, review, rating):
     conn = get_db_connection()
     curr = conn.cursor()
 
+    updateAvgRating(conn, curr, brewery_id, rating)
+
     curr.execute("INSERT INTO reviews (brewery_id, username, description, rating) VALUES (%s, %s, %s, %s)", (brewery_id, username, review, rating))
+    conn.commit()
+
+    return True
+
+def updateAvgRating(conn, curr, brewery_id, new_rating):
+    conn = get_db_connection()
+    curr = conn.cursor()
+
+    # check if brewery_id exists
+    curr.execute("SELECT avg_rating, review_count FROM rating WHERE brewery_id = %s", (brewery_id,))
+    rating_data = curr.fetchone()
+
+    if rating_data:
+        old_rating = rating_data[0]
+        new_review_count = rating_data[1] + 1
+        new_rating = str((float(new_rating) + float(old_rating) * rating_data[1]) / new_review_count)
+
+        curr.execute("UPDATE rating SET avg_rating = %s, review_count = %s  WHERE brewery_id = %s", (new_rating, new_review_count, brewery_id))
+    else:
+        curr.execute("INSERT INTO rating (brewery_id, avg_rating, review_count) VALUES (%s, %s, %s)", (brewery_id, new_rating, 1))
     conn.commit()
 
     return True
