@@ -187,4 +187,4 @@ def getBreweryView(id):
     return render_template("brewery.html", brewery=brewery)
 
 if __name__ == '__main__':
-    app.run(port=3838, debug=True)
+    app.run(debug=False)
